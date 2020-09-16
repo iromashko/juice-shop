@@ -63,7 +63,16 @@ describe('Signup Test', () => {
         .then((body) => {
           const token = body.authentication.token;
           cy.wrap(token).as('userToken');
-          cy.log('@userToken');
+
+          const userToken = cy.get('@userToken');
+          cy.visit('http://localhost:3000/', {
+            onBeforeLoad(browser) {
+              browser.localStorage.setItem('token', userToken);
+            },
+          });
+          cy.wait(2000);
+          cy.get('.cdk-overlay-backdrop').click(-50, -50, { force: true });
+          cy.get('.fa-layers-counter').contains(0);
         });
     });
   });
